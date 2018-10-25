@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojia.dao.BookDao">
+	
+<!-- 查询总记录数 -->
+	<select id="count" parameterType="String" resultType="Integer">
+		select count(*) from book where 1=1
+		<if test="category!=null and category!=''">
+			and category=#{category}
+		</if>
+		<if test="name!=null and name!=''">
+			and name like '%${name}%'
+		</if>
+		<if test="id!=null and id!=''">
+			and id like '%${id}%'
+		</if>
+		<if test="minPrice!=null and minPrice!=''">
+			and price > #{minPrice}
+		</if>
+		<if test="maxPrice!=null and maxPrice!=''">
+			and price > #{maxPrice}
+		</if>
+	</select>
+	
+	<!-- 条件查询图书集合 -->
+	<select id="findBooks" resultType="book">
+		select * from book where 1=1
+		<if test="category!=null and  category!=''">
+			and category=#{category}
+		</if>
+		<if test="name!=null and name!=''">
+			and name like '%${name}%'
+		</if>
+		<if test="id!=null and id!=''">
+			and id like '%${id}%'
+		</if>
+		<if test="minPrice!=null and minPrice!=''">
+			and price > #{minPrice}
+		</if>
+		<if test="maxPrice!=null and maxPrice!=''">
+			and price > #{maxPrice}
+		</if>
+		 order by id
+  		<if test="(currentPage != null and currentPage != '' or currentPage == 0) 
+  					and pageSize != null and pageSize != ''">
+    		limit #{currentPage}, #{pageSize}
+  		</if>
+	</select>
+	
+	<!-- 通过id查询图书 -->
+	<select id="findBookById" parameterType="String" resultType="book">
+		select * from book where id=#{id}
+	</select>
+	<!-- 修改库存 -->
+	<update id="updateBookNum" parameterType="order">
+		<foreach collection="orderItems" separator=";" item="item">
+			update book set pnum=pnum-#{item.buynum} where id=#{item.book.id}
+		</foreach>
+	</update>
+	
+
+	
+	<!-- 管理员 -->
+	
+	<!-- 添加图书 -->
+	<insert id="bookAdd" parameterType="book">
+		insert into book (id,price,name,pnum,category,description,imgurl) values
+		(#{id},#{price},#{name},#{pnum},#{category},#{description},#{imgurl})
+	</insert>
+	<!-- 编辑图书 -->
+	<update id="bookEdit" parameterType="book">
+		update book set price=#{price},name=#{name},pnum=#{pnum},category=#{category}
+		,description=#{description}
+		<if test="imgurl!=null and imgurl!=''">
+			,imgurl=#{imgurl}
+		</if>
+		where id=#{id}
+	</update>
+	
+	<!-- 通过图书id查询所有订单id -->
+	<select id="findOrderIdByBookId" parameterType="String" resultType="String">
+		select order_id from orderitem where book_id=#{id}
+	</select>
+	
+	<!-- 删除图书 -->
+	<delete id="deleteBook" parameterType="String">
+		delete from book where id=#{id}
+	</delete>
+</mapper>

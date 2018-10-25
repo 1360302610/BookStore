@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd 
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd 
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd 
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+    
+        <!-- 配置包扫描器 -->
+        <context:component-scan base-package="com.xiaojia.controller"/>
+        
+        <!-- 配置注解驱动 -->
+        <mvc:annotation-driven/>
+        <!-- 配置视图解析器 -->
+        <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        	<property name="prefix" value="/WEB-INF/jsp/"></property>
+        	<property name="suffix" value=".jsp"></property>
+        </bean>
+        <!-- 静态资源映射 -->
+        <mvc:resources location="/ad/" mapping="/ad/**"></mvc:resources>
+        <mvc:resources location="/css/" mapping="/css/**"></mvc:resources>
+        <mvc:resources location="/images/" mapping="/images/**"></mvc:resources>
+		<mvc:resources location="/js/" mapping="/js/**"></mvc:resources>
+		<mvc:resources location="/error/" mapping="/error/**"></mvc:resources>
+		<mvc:resources location="/bookcover/" mapping="/bookcover/**"></mvc:resources>
+		<mvc:resources location="/bank_img/" mapping="/bank_img/**"></mvc:resources>
+        <!-- 不拦截上传图书的图片 -->
+        <mvc:resources location="/upload/" mapping="/upload/**"></mvc:resources>
+        
+        <!--文件上传的控制-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="-1"/>
+        <property name="maxInMemorySize" value="2048"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+</beans>

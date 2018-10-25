@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojia.dao.UserDao">
+	
+	<!-- 注册 -->
+	<insert id="register" parameterType="user">
+		insert into user (username,password,gender,email,telephone,introduce,activeCode,role,registTime)
+		value (#{username},#{password},#{gender},#{email},#{telephone},#{introduce},#{activeCode},#{role},#{registTime})
+	</insert>
+	
+	<!-- 根据激活码查询用户 -->
+	<select id="findUserByActiveCode" parameterType="String" resultType="user">
+		select * from user where activeCode=#{code}
+	</select>
+	
+	<!-- 更新用户信息 -->
+	<update id="updateUser" parameterType="user">
+		update user set username=#{username} , password=#{password} , gender=#{gender} ,
+		email=#{email} , telephone=#{telephone} , introduce=#{introduce} ,
+		activeCode=#{activeCode} , role=#{role} , registTime=#{registTime} , 
+		state=#{state} where id=#{id}
+	</update>
+	
+	<!-- 登陆 -->
+	<select id="login" resultType="user">
+		select * from user where username=#{username,jdbcType=VARCHAR} and password=#{password,jdbcType=VARCHAR}
+	</select>
+	
+	<!-- 根据用户id查询用户 -->
+	<select id="findUserById" resultType="user" parameterType="Integer">
+		select * from user where id=#{id}
+	</select>
+	
+</mapper>

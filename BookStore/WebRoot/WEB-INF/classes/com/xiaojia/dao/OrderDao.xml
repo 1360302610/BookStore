@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiaojia.dao.OrderDao">
+
+	<!-- 添加订单 -->
+	<insert id="addOrder" parameterType="order">
+		insert into orders
+		(id,money,receiverAddress,receiverName,receiverPhone,paystate,ordertime,user_id)
+		values
+		(#{id},#{money},#{receiverAddress},#{receiverName},#{receiverPhone},#{paystate},#{ordertime},#{user.id})
+	</insert>
+
+	<!-- 查询该用户订单 -->
+	<select id="findOrdersByUserId" parameterType="Integer"
+		resultType="order">
+		select * from orders where user_id=#{id}
+	</select>
+
+	<!-- 根据订单id查询订单详情 -->
+	<resultMap type="order" id="orderInfoResult">
+		<id property="id" column="id" />
+		<result property="money" column="money" />
+		<result property="receiverAddress" column="receiverAddress" />
+		<result property="receiverName" column="receiverName" />
+		<result property="receiverPhone" column="receiverPhone" />
+		<result property="paystate" column="paystate" />
+		<result property="ordertime" column="ordertime" />
+		<association property="user" javaType="com.xiaojia.domain.User">
+			<id property="id" column="user_id" />
+			<result property="username" column="username" />
+			<result property="password" column="password" />
+			<result property="gender" column="gender" />
+			<result property="email" column="email" />
+			<result property="telephone" column="telephone" />
+			<result property="introduce" column="introduce" />
+			<result property="activeCode" column="activeCode" />
+			<result property="role" column="role" />
+			<result property="state" column="state" />
+			<result property="registTime" column="registTime" />
+		</association>
+
+		<collection property="orderItems" ofType="com.xiaojia.domain.OrderItem" >
+			<id property="book.id" column="book_id"/>
+			<id property="order.id" column="order_id"/>
+			<result property="buynum" column="buynum" />
+			<association property="book" javaType="com.xiaojia.domain.Book">
+				<id property="id" column="book_id" />
+				<result property="name" column="name" />
+				<result property="price" column="price" />
+				<result property="pnum" column="pnum" />
+				<result property="category" column="category" />
+				<result property="description" column="description" />
+				<result property="imgurl" column="imgurl" />
+			</association>
+			<association property="order" javaType="com.xiaojia.domain.Order" >
+				<id property="id" column="order_id" />
+				<result property="money" column="money" />
+				<result property="receiverAddress" column="receiverAddress" />
+				<result property="receiverName" column="receiverName" />
+				<result property="receiverPhone" column="receiverPhone" />
+				<result property="paystate" column="paystate" />
+				<result property="ordertime" column="ordertime" />
+			</association>
+		</collection>
+	</resultMap>
+	<select id="findOrderByOrderId" parameterType="String"
+		resultMap="orderInfoResult">
+		select o.*,oi.*,u.*,b.* from orders o,orderitem oi,user u,book b where o.id=oi.order_id and o.user_id=u.id and oi.book_id=b.id and o.id=#{orderid}
+	</select>
+	
+	<!-- 修改订单状态 -->
+	<update id="changeOrderState" parameterType="String">
+		update orders set paystate=1 where id=#{orderid}
+	</update>
+	
+	<!-- 批量删除订单 -->
+	<delete id="deleteOrderById" parameterType="String">
+		delete from orders  where id in
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+	
+</mapper>
